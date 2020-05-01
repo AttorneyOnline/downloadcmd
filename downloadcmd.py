@@ -10,7 +10,7 @@ while True:
     elif appstate == STATE_DOWNLOADCHAR:
         print("=== DOWNLOAD A CHARACTER ===\nEnter the name of the AO character you wish to download.\nTo download multiple characters, separate them by commas: \"Klavier, Phoenix, Apollo\"\nEnter \"back\" to return to the main menu.")
     
-    choice = raw_input("> ")
+    choice = input("> ")
     
     if appstate == STATE_MENU:
         if choice == "1":

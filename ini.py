@@ -1,5 +1,4 @@
-from ConfigParser import ConfigParser
-from PyQt4.QtCore import QString
+from configparser import ConfigParser
 
 def read_ini(file, section, value, default=""):
 	if isinstance(file, str) or isinstance(file, QString):
