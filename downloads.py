@@ -63,7 +63,7 @@ def downloadChar(name):
 
                 if not os.path.exists("base/characters/"+name+"/"+emoteanim+".png"):
                     print("[%d]" % (i+1), "attempting to download "+emoteanim+".png... ")
-                    urlanim_talk = requests.get(url+"(b)"+emoteanim.lower()+".gif")
+                    urlanim_talk = requests.get(url+emoteanim.lower()+".png")
                     if urlanim_talk.ok:
                         print("OK!")
                         open("base/characters/"+name+"/"+emoteanim+".png", "wb").write(urlanim_talk.content)
