@@ -1,3 +1,5 @@
+base/
+
 build/
 dist/
 cx_Freeze/bases
