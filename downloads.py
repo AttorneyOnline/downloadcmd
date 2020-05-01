@@ -1,13 +1,13 @@
 import os, ini, requests
 
 def downloadChar(name):
-    mirrors = ["http://s3.wasabisys.com/webao/base/characters/"+name.lower()+"/",
-            "http://s3.wasabisys.com/aov-webao/base/characters/"+name.lower()+"/",
-            "http://s3.us-west-1.wasabisys.com/vanilla-assets/base/characters/"+name.lower()+"/"]
+    mirrors = ["http://s3.wasabisys.com/webao/base/characters/",
+            "http://s3.wasabisys.com/aov-webao/base/characters/",
+            "http://s3.us-west-1.wasabisys.com/vanilla-assets/base/characters/"]
     
-    for url in mirrors:
-        print("trying "+url+"... ")
-        a = requests.get(url+"char.ini")
+    for mirror in mirrors:
+        print("trying "+mirror+name.lower()+"/"+"... ")
+        a = requests.get(mirror+name.lower()+"/"+"char.ini")
         if not a.ok:
             print("ERROR")
             continue
@@ -28,7 +28,7 @@ def downloadChar(name):
 
                 if sound and sound != "1" and sound != "0" and sound != "-" and not os.path.exists("base/sounds/general/"+sound+".wav"):
                     print("[%d]" % (i+1), "attempting to download sound "+sound+"... ")
-                    urlsound = requests.get(url.replace("/characters/"+name.lower()+"/", "/sounds/general/"+sound.lower()+".wav"))
+                    urlsound = requests.get(mirror+"sounds/general/"+sound.lower()+".wav")
                     if urlsound.ok:
                         print("OK!")
                         open("base/sounds/general/"+sound+".wav", "wb").write(urlsound.content)
@@ -36,43 +36,43 @@ def downloadChar(name):
                         print("ERROR")
 
                 if emotepre != "-":
-                    download_missing_emote(url,name,"",emotepre,"gif")
+                    download_missing_emote(mirror,name,"",emotepre,"gif")
                 
-                download_missing_emote(url,name,"(a)",emoteanim,"gif")
-                download_missing_emote(url,name,"(b)",emoteanim,"gif")
+                download_missing_emote(mirror,name,"(a)",emoteanim,"gif")
+                download_missing_emote(mirror,name,"(b)",emoteanim,"gif")
 
-                download_missing_emote(url,name,"",emoteanim,"png")
+                download_missing_emote(mirror,name,"",emoteanim,"png")
 
                 if not os.path.exists("base/characters/"+name+"/emotions/button%d_off.png" % (i+1)):
-                    button_off = requests.get(url+"emotions/button%d_off.png" % (i+1))
+                    button_off = requests.get(mirror+name.lower()+"/"+"emotions/button%d_off.png" % (i+1))
                     if button_off.ok:
                         print("[%d]" % (i+1), "downloaded button%d_off.png" % (i+1))
                         open("base/characters/"+name+"/emotions/button%d_off.png" % (i+1), "wb").write(button_off.content)
 
                 if not os.path.exists("base/characters/"+name+"/emotions/button%d_on.png" % (i+1)):
-                    button_on = requests.get(url+"emotions/button%d_on.png" % (i+1))
+                    button_on = requests.get(mirror+name.lower()+"emotions/button%d_on.png" % (i+1))
                     if button_on.ok:
                         print("[%d]" % (i+1), "downloaded button%d_on.png" % (i+1))
                         open("base/characters/"+name+"/emotions/button%d_on.png" % (i+1), "wb").write(button_on.content)
 
-            char_icon = requests.get(url+"char_icon.png")
+            char_icon = requests.get(mirror+name.lower()+"char_icon.png")
             if char_icon.ok:
                 print("downloaded char_icon.png")
                 open("base/characters/"+name+"/char_icon.png", "wb").write(char_icon.content)
-            objection = requests.get(url+"objection.wav")
+            objection = requests.get(mirror+name.lower()+"objection.wav")
             if objection.ok:
                 print("downloaded objection.wav")
                 open("base/characters/"+name+"/objection.wav", "wb").write(objection.content)
-            holdit = requests.get(url+"holdit.wav")
+            holdit = requests.get(mirror+name.lower()+"holdit.wav")
             if holdit.ok:
                 print("downloaded holdit.wav")
                 open("base/characters/"+name+"/holdit.wav", "wb").write(holdit.content)
-            takethat = requests.get(url+"takethat.wav")
+            takethat = requests.get(mirror+name.lower()+"takethat.wav")
             if takethat.ok:
                 print("downloaded takethat.wav")
                 open("base/characters/"+name+"/takethat.wav", "wb").write(takethat.content)
-            custom_gif = requests.get(url+"custom.gif")
-            custom_wav = requests.get(url+"custom.wav")
+            custom_gif = requests.get(mirror+name.lower()+"custom.gif")
+            custom_wav = requests.get(mirror+name.lower()+"custom.wav")
             if custom_gif.ok:
                 print("downloaded custom.gif")
                 open("base/characters/"+name+"/custom.gif", "wb").write(custom_gif.content)
@@ -83,12 +83,12 @@ def downloadChar(name):
             return
 
 def download_missing_emote(url,charname,modifier,emotename,extension):
-    emotepath = modifier+emotename+"."+extension
-    if not os.path.exists("base/characters/"+charname+"/"+emotepath):
+    emotepath = charname+"/"+modifier+emotename+"."+extension
+    if not os.path.exists("base/"+emotepath):
         print("attempting to download "+emotepath)
         emotedownload = requests.get(url+emotepath.lower())
         if emotedownload.ok:
             print("OK!")
-            open("base/characters/"+charname+"/"+emotepath, "wb").write(emotedownload.content)
+            open("base/characters/"+emotepath, "wb").write(emotedownload.content)
         else:
             print("ERROR")
