@@ -1,11 +1,11 @@
 import os, ini, requests
 
 def downloadChar(name):
-    urls = ["http://s3.wasabisys.com/webao/base/characters/"+name.lower()+"/",
+    mirrors = ["http://s3.wasabisys.com/webao/base/characters/"+name.lower()+"/",
             "http://s3.wasabisys.com/aov-webao/base/characters/"+name.lower()+"/",
             "http://s3.us-west-1.wasabisys.com/vanilla-assets/base/characters/"+name.lower()+"/"]
     
-    for url in urls:
+    for url in mirrors:
         print("trying "+url+"... ")
         a = requests.get(url+"char.ini")
         if not a.ok:
@@ -34,47 +34,21 @@ def downloadChar(name):
                         open("base/sounds/general/"+sound+".wav", "wb").write(urlsound.content)
                     else:
                         print("ERROR")
-                if emotepre != "-" and not os.path.exists("base/characters/"+name+"/"+emotepre+".gif"):
-                    print("[%d]" % (i+1), "attempting to download "+emotepre+".gif... ")
-                    urlpre = requests.get(url+emotepre.lower()+".gif")
-                    if urlpre.ok:
-                        print("OK!")
-                        open("base/characters/"+name+"/"+emotepre+".gif", "wb").write(urlpre.content)
-                    else:
-                        print("ERROR")
+
+                if emotepre != "-":
+                    download_missing_emote(url,name,"",emotepre,"gif")
                 
-                if not os.path.exists("base/characters/"+name+"/(a)"+emoteanim+".gif"):
-                    print("[%d]" % (i+1), "attempting to download (a)"+emoteanim+".gif... ")
-                    urlanim_idle = requests.get(url+"(a)"+emoteanim.lower()+".gif")
-                    if urlanim_idle.ok:
-                        print("OK!")
-                        open("base/characters/"+name+"/(a)"+emoteanim+".gif", "wb").write(urlanim_idle.content)
-                    else:
-                        print("ERROR")
+                download_missing_emote(url,name,"(a)",emoteanim,"gif")
+                download_missing_emote(url,name,"(b)",emoteanim,"gif")
 
-                if not os.path.exists("base/characters/"+name+"/(b)"+emoteanim+".gif"):
-                    print("[%d]" % (i+1), "attempting to download (b)"+emoteanim+".gif... ")
-                    urlanim_talk = requests.get(url+"(b)"+emoteanim.lower()+".gif")
-                    if urlanim_talk.ok:
-                        print("OK!")
-                        open("base/characters/"+name+"/(b)"+emoteanim+".gif", "wb").write(urlanim_talk.content)
-                    else:
-                        print("ERROR")
-
-                if not os.path.exists("base/characters/"+name+"/"+emoteanim+".png"):
-                    print("[%d]" % (i+1), "attempting to download "+emoteanim+".png... ")
-                    urlanim_talk = requests.get(url+emoteanim.lower()+".png")
-                    if urlanim_talk.ok:
-                        print("OK!")
-                        open("base/characters/"+name+"/"+emoteanim+".png", "wb").write(urlanim_talk.content)
-                    else:
-                        print("ERROR")
+                download_missing_emote(url,name,"",emoteanim,"png")
 
                 if not os.path.exists("base/characters/"+name+"/emotions/button%d_off.png" % (i+1)):
                     button_off = requests.get(url+"emotions/button%d_off.png" % (i+1))
                     if button_off.ok:
                         print("[%d]" % (i+1), "downloaded button%d_off.png" % (i+1))
                         open("base/characters/"+name+"/emotions/button%d_off.png" % (i+1), "wb").write(button_off.content)
+
                 if not os.path.exists("base/characters/"+name+"/emotions/button%d_on.png" % (i+1)):
                     button_on = requests.get(url+"emotions/button%d_on.png" % (i+1))
                     if button_on.ok:
@@ -107,3 +81,14 @@ def downloadChar(name):
                 open("base/characters/"+name+"/custom.wav", "wb").write(custom_wav.content)
             print("finished downloading character "+name)
             return
+
+def download_missing_emote(url,charname,modifier,emotename,extension):
+    emotepath = modifier+emotename+"."+extension
+    if not os.path.exists("base/characters/"+charname+"/"+emotepath):
+        print("attempting to download "+emotepath)
+        emotedownload = requests.get(url+emotepath.lower())
+        if emotedownload.ok:
+            print("OK!")
+            open("base/characters/"+charname+"/"+emotepath, "wb").write(emotedownload.content)
+        else:
+            print("ERROR")
